@@ -4,15 +4,13 @@ using System;
 /// <summary>
 /// Класс, который предоставляет доступ к массиву-буфферу классов. 
 /// </summary>
+/// <typeparam name="T">Класс элементов буффера</typeparam>
 public class ClassBufferArray<T> where T : class
 {
     /// <summary>
-    /// Массив классов. только для чтения
+    /// Массив классов.
     /// </summary>
-    public T[] Items
-    {
-        get;
-    }
+    T[] Items;
     /// <summary>
     /// Конструктор по умолчанию, заполняет массив стандартными значениями. Размер массива - 100;
     /// </summary>
@@ -76,7 +74,7 @@ public class ClassBufferArray<T> where T : class
     public bool AddNewItem(T newItem){
         int id = GetLastIndex();
         //Проверка на то, что массив уже заполнен
-        if(id <= Items.Length-1){
+        if(id < Items.Length-1){
             //Проверка на то, что индекс больше нуля (То есть функция не вернула пустой результат)
             if (id >= 0){
                 Items[id+1] = newItem;
@@ -124,6 +122,13 @@ public class ClassBufferArray<T> where T : class
             return null;
         }
     }
+    /// <summary>
+    /// Метод получения длинны всего массива
+    /// </summary>
+    /// <returns>длинна массива</returns>
+    public int GetLength(){
+        return Items.Length;
+    }
 }
 /// <summary>
 /// Класс проверки многопоточности и взаимодействия скриптов
@@ -164,7 +169,7 @@ public class TestClass {
 }
 
 /// <summary>
-/// Класс внешних элементов юнитов.
+/// Класс внешних элементов юнита.
 /// </summary>
 public class UnitElement{
     /// <summary>
@@ -208,19 +213,30 @@ public class UnitElement{
 /// <summary>
 /// Класс оружия юнита. Класс предполагается часто клонировать вместо пересоздания.
 /// </summary>
-public class UnitWeapon
+public class UnitWeapon : UnitElement
 {
-    
+    /// <summary>
+    /// Конструктор с параметром.
+    /// </summary>
+    /// <param name="Parent">Родитель класса</param>
+    /// <returns></returns>
+    public UnitWeapon(Unit Parent) : base(Parent){
+
+    } 
 }
 /// <summary>
 /// Класс колёс/ног/гусениц/прочих частей для движения юнита Класс предполагается часто клонировать вместо пересоздания.
 /// </summary>
-public class UnitChasis
+public class UnitChasis : UnitElement
 {
     /// <summary>
-    /// Спрайт шавсси. По умолчанию null. Предполагается задавать его извне, чтобы не загружать процесс созданием нового класса. 
+    /// Конструктор с параметром.
     /// </summary>
-    Sprite ChasisSprite = null;
+    /// <param name="Parent">Родитель Класса</param>
+    /// <returns></returns>
+    public UnitChasis(Unit Parent) : base(Parent){
+
+    }
 }
 /// <summary>
 /// Класс подконтрольного юнита. Содержит в себе методы для обработки его состояния и поведения. Класс предполагается часто клонировать вместо пересоздания.
@@ -266,7 +282,6 @@ public class LibLoader : Node
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
