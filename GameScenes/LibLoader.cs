@@ -10,7 +10,7 @@ public class ClassBufferArray<T> where T : class
     /// <summary>
     /// Массив классов.
     /// </summary>
-    T[] Items;
+    protected T[] Items;
     /// <summary>
     /// Конструктор по умолчанию, заполняет массив стандартными значениями. Размер массива - 100;
     /// </summary>
@@ -116,7 +116,7 @@ public class ClassBufferArray<T> where T : class
     /// <param name="id"></param>
     /// <returns></returns>
     public T GetElement(int id){
-        if(id < Items.Length){
+        if(id < Items.Length && id >= 0){
             return Items[id];
         } else {
             return null;
@@ -128,6 +128,34 @@ public class ClassBufferArray<T> where T : class
     /// <returns>длинна массива</returns>
     public int GetLength(){
         return Items.Length;
+    }
+}
+/// <summary>
+/// Класс для создания и хранения фиксированного количества элементов заданного класса.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class FixedBufferArray<T> where T : class, new(){
+    public readonly T[] Items;
+    /// <summary>
+    /// Конструктор без параметров. По умолчанию количество элементов 100
+    /// </summary>
+    public FixedBufferArray(){
+        Items = new T[100];
+        for (int i = 0; i < Items.Length; i++)
+        {
+            Items[i] = new T();
+        }
+    }
+    /// <summary>
+    /// Конструктор с параметром. Принимает целочисленное значение длины массива
+    /// </summary>
+    /// <param name="length">длина массива</param>
+    public FixedBufferArray(int length){
+        Items = new T[length];
+        for (int i = 0; i < Items.Length; i++)
+        {
+            Items[i] = new T();
+        }
     }
 }
 /// <summary>

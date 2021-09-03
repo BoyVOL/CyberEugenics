@@ -73,6 +73,83 @@ namespace UnitTesting{
             Result &= (!buffer);
             return Result;
         }
+        /// <summary>
+        /// Проверка операции DeleteAll, заполнение массивов элементами, первый не должен быть нулл. 
+        /// Затем запуск метода и снова провека первого элемента. Он опять должен быть нулл.
+        /// </summary>
+        /// <returns></returns>
+        public static bool TestDeleteAll(){
+            ClassBufferArray<string> TestClass = new ClassBufferArray<string>(3);
+            bool Result = true;
+            //Переменная-буффер для значения AddNewItem
+            bool buffer = false;
+            TestClass.AddNewItem("10");
+            TestClass.AddNewItem("10");
+            TestClass.AddNewItem("10");
+            buffer = TestClass.GetElement(0) == "10";
+            Result &= (buffer);
+            TestClass.DeleteAll();
+            buffer = TestClass.GetElement(0) == null;
+            Result &= (buffer);
+            return Result;
+        }
+        /// <summary>
+        /// Проверка GetElement на возвращение null. он должен вернуть это значение за границами массива, а так же за пределами индексов. 
+        /// </summary>
+        /// <returns></returns>
+        public static bool TestGetElement(){
+            ClassBufferArray<string> TestClass = new ClassBufferArray<string>(3);
+            bool Result = true;
+            //Переменная-буффер для значения AddNewItem
+            bool buffer = false;
+            TestClass.AddNewItem("10");
+            TestClass.AddNewItem("10");
+            TestClass.AddNewItem("10");
+            buffer = TestClass.GetElement(0) == "10";
+            Result &= (buffer);
+            buffer = TestClass.GetElement(-1) == null;
+            Result &= (buffer);
+            buffer = TestClass.GetElement(4) == null;
+            Result &= (buffer);
+            TestClass.DeleteAll();
+            buffer = TestClass.GetElement(0) == null;
+            Result &= (buffer);
+            return Result;
+        }
+
+        /// <summary>
+        /// Общий тип тестов
+        /// </summary>
+        /// <returns></returns>
+        public static bool RunTests(){
+            bool Result = true;
+            bool buffer = false;
+            GD.Print("Проверка GetElement на возвращение null");
+            buffer = TestGetElement();
+            GD.Print("Результат = ",buffer);
+            Result &= (buffer);
+            GD.Print("Тест на добавление начального элемента в класс");
+            buffer = TestOneElement();
+            GD.Print("Результат = ",buffer);
+            Result &= (buffer);
+            GD.Print("Проверка GetLastIndex на отображение актуальной информации. Три раза добавляется элемент, и каждый раз проверяется значение.");
+            buffer = TestGetLastIndexIncrement();
+            GD.Print("Результат = ",buffer);
+            Result &= (buffer);
+            GD.Print("Проверка GetLastItem. Метод должен возвращать null до добавления элемента и 10 после");
+            buffer = TestGetLastItemAddElement();
+            GD.Print("Результат = ",buffer);
+            Result &= (buffer);
+            GD.Print("Проверка AddNewItem на переполнение.");
+            buffer = TestAddNewItem();
+            GD.Print("Результат = ",buffer);
+            Result &= (buffer);
+            GD.Print("Проверка операции DeleteAll.");
+            buffer = TestDeleteAll();
+            GD.Print("Результат = ",buffer);
+            Result &= (buffer);
+            return Result;
+        }
     }
 }
 
@@ -85,15 +162,17 @@ public class UnitTests : Node
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        
         #if DEBUG
-        GD.Print("Тест на добавление начального элемента в класс");
-        GD.Print("Результат = ",ClassBufferArrayTest.TestOneElement());
-        GD.Print("Проверка GetLastIndex на отображение актуальной информации. Три раза добавляется элемент, и каждый раз проверяется значение.");
-        GD.Print("Результат = ",ClassBufferArrayTest.TestGetLastIndexIncrement());
-        GD.Print("Проверка GetLastItem. Метод должен возвращать null до добавления элемента и 10 после");
-        GD.Print("Результат = ",ClassBufferArrayTest.TestGetLastItemAddElement());
-        GD.Print("Проверка AddNewItem на переполнение.");
-        GD.Print("Результат = ",ClassBufferArrayTest.TestAddNewItem());
+        bool buffer = false;
+        GD.Print("------Тесты класса ClassBufferArray------");
+        buffer = ClassBufferArrayTest.RunTests();
+        GD.Print("------Тесты класса ClassBufferArray------");
+        buffer = ClassBufferArrayTest.RunTests();
+        GD.Print("Результат всех тестов = ",buffer);
+        if(!buffer){
+            throw new Exception("auto tests found error");
+        }
         #endif
     }
 
