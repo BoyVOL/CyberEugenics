@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "vQ3KaQnNxxAi31aJmZQTUX9/D43Y3ERP0Oiu8NLO3138aiiCWgUhHox+NXs0bjQdvRqC+TaV96pIV2RagT2pBw==",
+  "dgSpecHash": "ubAIfhuQgSILMHKZRgxJxxqphjRrJDCRCpMB9HpGs61IgLnydrHiUs+SYdACq1u0Q3tt1pCfRH7xTIYpEFLaig==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ADMINMINSPORT\\Documents\\GitHub\\CyberEugenics\\Cyber Eugenics.csproj",
+  "projectFilePath": "C:\\Users\\vladi\\Documents\\GitHub\\CyberEugenics\\Cyber Eugenics.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\ADMINMINSPORT\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.0\\microsoft.netframework.referenceassemblies.1.0.0.nupkg.sha512",
-    "C:\\Users\\ADMINMINSPORT\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net472\\1.0.0\\microsoft.netframework.referenceassemblies.net472.1.0.0.nupkg.sha512"
+    "C:\\Users\\vladi\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.0\\microsoft.netframework.referenceassemblies.1.0.0.nupkg.sha512",
+    "C:\\Users\\vladi\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net472\\1.0.0\\microsoft.netframework.referenceassemblies.net472.1.0.0.nupkg.sha512"
   ],
   "logs": []
 }
