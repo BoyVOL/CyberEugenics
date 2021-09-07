@@ -37,28 +37,66 @@ public class FixedBufferArray<T> where T : class, new(){
 	}
 }
 
-public class ClassA : FixedBufferArray<Node2D>{
-	public ClassA() : base(){
 
+/// <summary>
+/// Объект-буффер для хранения предзагруженных спрайтов.
+/// </summary>
+public class SpriteBufferArray: FixedBufferArray<Sprite>{
+	/// <summary>
+	/// Перегрузка конструктора по умолчанию. Задаёт базовые параметры спрайта
+	/// </summary>
+	/// <returns></returns>
+	public SpriteBufferArray() : base(){
+		for (int i = 0; i < Items.Length; i++)
+		{
+			Items[i].Visible = false;
+		}
 	}
-	
-	public void checkType(){
-		GD.Print("Тип элемента - ", Items[0].GetType());
+	/// <summary>
+	/// Перегрузка конструктора с параметром длины массива. Задаёт базовые параметры спрайта
+	/// </summary>
+	/// <param name="length">длина массива</param>
+	/// <returns></returns>
+	public SpriteBufferArray(int length) : base(length){
+		for (int i = 0; i < Items.Length; i++)
+		{
+			Items[i].Visible = false;
+		}
+	}
+	/// <summary>
+	/// Задание текстуры элемента
+	/// </summary>
+	/// <param name="i">индекс элемента</param>
+	/// <param name="texture">текстура, которую надо загрузить спрайту</param>
+	public void SetTexture(int i, Texture texture){
+		Items[i].Texture = texture;
+	}
+	/// <summary>
+	/// Метод задания текущих координат спрайта
+	/// </summary>
+	/// <param name="i">индекс спрайта</param>
+	/// <param name="Coords">Координаты</param>
+	public void SetCoordinates(int i, Vector2 Coords){
+		Items[i].Position = Coords;
+	}
+	/// <summary>
+	/// Метод задания видимости спрайта
+	/// </summary>
+	/// <param name="i">индекс спрайта</param>
+	/// <param name="Visibility">Видимость</param>
+	public void SetVisible(int i, bool Visibility){
+		Items[i].Visible = Visibility;
+	}
+	/// <summary>
+	/// Метод задания размеров спрайта
+	/// </summary>
+	/// <param name="i">индекс спрайта</param>
+	/// <param name="Scale">Размеры</param>
+	public void SetSize(int i, Vector2 Scale){
+		Items[i].Scale = Scale;
 	}
 }
 
-public class ClassB : ClassA {
-	new protected Sprite[] Items;
-
-	public ClassB() : base(){
-
-	}
-
-}
-
-public class NodeFBArray{
-
-}
 /// <summary>
 /// Класс проверки многопоточности и взаимодействия скриптов
 /// </summary>
@@ -137,6 +175,7 @@ public class UnitElement{
 		} else throw new Exception("Sprite is not set");
 	}
 }
+
 /// <summary>
 /// Класс оружия юнита. Класс предполагается часто клонировать вместо пересоздания.
 /// </summary>
@@ -151,6 +190,7 @@ public class UnitWeapon : UnitElement
 
 	} 
 }
+
 /// <summary>
 /// Класс колёс/ног/гусениц/прочих частей для движения юнита Класс предполагается часто клонировать вместо пересоздания.
 /// </summary>
@@ -165,6 +205,7 @@ public class UnitChasis : UnitElement
 
 	}
 }
+
 /// <summary>
 /// Класс подконтрольного юнита. Содержит в себе методы для обработки его состояния и поведения. Класс предполагается часто клонировать вместо пересоздания.
 /// </summary>
