@@ -32,11 +32,14 @@ public class FixedBufferArray<T> where T : class, new(){
 			Items[i] = new T();
 		}
 	}
+	/// <summary>
+	/// Возврат длины внутреннего массива
+	/// </summary>
+	/// <returns>целочисленное значение длины</returns>
 	public int getLength(){
 		return Items.Length;
 	}
 }
-
 
 /// <summary>
 /// Объект-буффер для хранения предзагруженных спрайтов.
@@ -94,6 +97,78 @@ public class SpriteBufferArray: FixedBufferArray<Sprite>{
 	/// <param name="Scale">Размеры</param>
 	public void SetSize(int i, Vector2 Scale){
 		Items[i].Scale = Scale;
+	}
+	/// <summary>
+	/// Добавляет указанный элемент как ребёнок указанному экземпляру Node2D
+	/// </summary>
+	/// <param name="i">индекс элемента, который надо добавить</param>
+	/// <param name="Parent">Новый Родитель</param>
+	public void AddAsChild(int i, Node2D Parent){
+		Parent.AddChild(Items[i]);
+	}
+	/// <summary>
+	/// Удаляет выбранный элемент из списка детей выбранного экземпляра Node2D
+	/// </summary>
+	/// <param name="i">индекс элемента, которого надо удалить из списка детей старого родителя</param>
+	/// <param name="Parent">Объект-родитель.</param>
+	public void DeleteAsChild(int i, Node2D Parent){
+		Parent.RemoveChild(Items[i]);
+	}
+}
+
+/// <summary>
+/// Класс для создания текстур из блоков
+/// </summary>
+public class TextureConstructor{
+	/// <summary>
+	/// Двумерный массив составных частей будущей текстуры
+	/// </summary>
+	private Sprite[,] Arr = new Sprite[10,10];
+	/// <summary>
+	/// Элемент для отрисовки конечной текстуры.
+	/// </summary>
+	/// <returns></returns>
+	private Viewport Renderer = new Viewport();
+	/// <summary>
+	/// Метод для инициализации элементов массива
+	/// </summary>
+	private void InitElements(){
+		for (int i = 0; i < Arr.GetLength(0); i++)
+		{
+			for (int j = 0; j < Arr.GetLength(1); j++)
+			{
+				Arr[i,j] = new Sprite();
+				Renderer.AddChild(Arr[i,j]);
+			}
+		}
+	}
+	/// <summary>
+	/// Конструктор по умолчанию
+	/// </summary>
+	public TextureConstructor(){
+		InitElements();
+	}
+	/// <summary>
+	/// Конструктор с параметром, создающий квадратный массив
+	/// </summary>
+	/// <param name="Length">Сторона квадрата</param>
+	public TextureConstructor(int Length){
+		Arr = new Sprite[Length,Length];
+		InitElements();
+	}
+	/// <summary>
+	/// Конструктор, создающий прямоуголный массив с заданными размерами
+	/// </summary>
+	/// <param name="Width">Ширина массива</param>
+	/// <param name="Height">Высота массива</param>
+	public TextureConstructor(int Width, int Height){
+		Arr = new Sprite[Height,Width];
+		InitElements();
+	}
+
+	public Texture GetTexture(){
+		Texture Result = new ImageTexture();
+		return Result;
 	}
 }
 
