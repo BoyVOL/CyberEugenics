@@ -117,59 +117,10 @@ public class SpriteBufferArray: FixedBufferArray<Sprite>{
 }
 
 /// <summary>
-/// Класс для создания текстур из блоков
+/// Класс для создания текстур из определённой палитры пикселей
 /// </summary>
 public class TextureConstructor{
-	/// <summary>
-	/// Двумерный массив составных частей будущей текстуры
-	/// </summary>
-	private Sprite[,] Arr = new Sprite[10,10];
-	/// <summary>
-	/// Элемент для отрисовки конечной текстуры.
-	/// </summary>
-	/// <returns></returns>
-	private Viewport Renderer = new Viewport();
-	/// <summary>
-	/// Метод для инициализации элементов массива
-	/// </summary>
-	private void InitElements(){
-		for (int i = 0; i < Arr.GetLength(0); i++)
-		{
-			for (int j = 0; j < Arr.GetLength(1); j++)
-			{
-				Arr[i,j] = new Sprite();
-				Renderer.AddChild(Arr[i,j]);
-			}
-		}
-	}
-	/// <summary>
-	/// Конструктор по умолчанию
-	/// </summary>
-	public TextureConstructor(){
-		InitElements();
-	}
-	/// <summary>
-	/// Конструктор с параметром, создающий квадратный массив
-	/// </summary>
-	/// <param name="Length">Сторона квадрата</param>
-	public TextureConstructor(int Length){
-		Arr = new Sprite[Length,Length];
-		InitElements();
-	}
-	/// <summary>
-	/// Конструктор, создающий прямоуголный массив с заданными размерами
-	/// </summary>
-	/// <param name="Width">Ширина массива</param>
-	/// <param name="Height">Высота массива</param>
-	public TextureConstructor(int Width, int Height){
-		Arr = new Sprite[Height,Width];
-		InitElements();
-	}
-
-	public Texture GetTexture(){
-		Texture Result = new ImageTexture();
-		return Result;
-	}
+	
 }
 
 /// <summary>
