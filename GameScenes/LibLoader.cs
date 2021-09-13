@@ -117,10 +117,125 @@ public class SpriteBufferArray: FixedBufferArray<Sprite>{
 }
 
 /// <summary>
-/// Класс для создания текстур из определённой палитры пикселей
+/// Класс для создания текстур из пикселей и возвращения её копии
 /// </summary>
-public class TextureConstructor{
-	
+public class TextureEditor{
+	/// <summary>
+	/// Изображение, которое нужно редактировать
+	/// </summary>
+	/// <returns></returns>
+	protected Image Data = new Image();
+	/// <summary>
+	/// Ширина изображения
+	/// </summary>
+	protected int Width = 10;
+	/// <summary>
+	/// Высота изображения
+	/// </summary>
+	protected int Height = 10;
+
+	protected Image.Format Format = Image.Format.Rg8;
+	/// <summary>
+	/// Конструктор класса по умолчанию
+	/// </summary>
+	public TextureEditor(){
+		ClearTexture();
+	}
+	/// <summary>
+	/// Перегрузка для задания формата
+	/// </summary>
+	/// <param name="format">Формат изображения</param>	
+	public TextureEditor(Image.Format format){
+		Format = format;
+		ClearTexture();
+	}
+	/// <summary>
+	/// Перегрузка для задания размеров квадратного изображения и формата
+	/// </summary>
+	/// <param name="size">Сторона квадрата</param>
+	/// <param name="format">Формат изображения</param>
+	public TextureEditor(int size, Image.Format format = Image.Format.Rg8){
+		Width = size;
+		Height = size;
+		Format = format;
+		ClearTexture();
+	}
+	/// <summary>
+	/// Перегрузка для задания размеров прямоугольника изображения и вормата
+	/// </summary>
+	/// <param name="width">Ширина изображения</param>
+	/// <param name="height">Высота изображения</param>
+	/// <param name="format">Вормат изображения</param>
+	public TextureEditor(int width, int height, Image.Format format = Image.Format.Rg8){
+		Width = width;
+		Height = height;
+		Format = format;
+		ClearTexture();
+	}
+	/// <summary>
+	/// Метод очистки изображения
+	/// </summary>
+	public void ClearTexture(){
+		Data = new Image();
+		Data.Create(Width,Height,true,Format);
+	}
+	/// <summary>
+	/// Блокировка изображения для редактирования
+	/// </summary>
+	public void Lock(){
+		Data.Lock();
+	}
+	/// <summary>
+	/// Разблокировка изображения от редактирования
+	/// </summary>
+	public void Unlock(){
+		Data.Unlock();
+	}
+	/// <summary>
+	/// Устанавливает пиксель на выбранной позиции
+	/// </summary>
+	/// <param name="i"></param>
+	/// <param name="j"></param>
+	/// <param name="color"></param>
+	public void SetPixel(int i, int j, Color color){
+		Data.SetPixel(i,j,color);
+	}
+	/// <summary>
+	/// Изменение размера квадратного изображения с его очисткой
+	/// </summary>
+	/// <param name="size">сторона квадрата</param>
+	public void Resize(int size){
+		Width = size;
+		Height = size;
+		ClearTexture();
+	}
+	/// <summary>
+	/// Изменение размера прямоугольного изображения с его очисткой
+	/// </summary>
+	/// <param name="width"></param>
+	/// <param name="height"></param>
+	public void Resize(int width, int height){
+		Width = width;
+		Height = height;
+		ClearTexture();
+	}
+	/// <summary>
+	/// Изменение формата изображения
+	/// </summary>
+	/// <param name="format">новый формат</param>
+	public void ChangeFormat(Image.Format format){
+		Format = format;
+		ClearTexture();
+	}
+	/// <summary>
+	/// Возврат экземпляра получившейся текстуры
+	/// </summary>
+	/// <returns></returns>
+	public ImageTexture GetTexture(){
+		ImageTexture Temp = new ImageTexture();
+		Temp.CreateFromImage((Image)Data.Duplicate(true));
+		return Temp;
+	}
 }
 
 /// <summary>
@@ -233,7 +348,7 @@ public class UnitChasis : UnitElement
 }
 
 /// <summary>
-/// Класс подконтрольного юнита. Содержит в себе методы для обработки его состояния и поведения. Класс предполагается часто клонировать вместо пересоздания.
+/// Класс подконтрольного юнита. Содержит в себе методы для обработки его состояния и поведения.
 /// </summary>
 public class Unit 
 {

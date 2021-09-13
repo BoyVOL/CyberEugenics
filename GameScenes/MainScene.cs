@@ -21,9 +21,7 @@ public class MainScene : Node2D
 	/// Тестовый конструктор текстур
 	/// </summary>
 	/// <returns></returns>
-	TextureConstructor Builder = new TextureConstructor();
-	
-		ViewportTexture txt = new ViewportTexture();
+	TextureEditor Builder = new TextureEditor(50);
 	/// <summary>
 	/// Задание тестового экземпляра конструктора текстур и его элементов
 	/// </summary>
@@ -34,11 +32,17 @@ public class MainScene : Node2D
 	/// Метод для задания начальной точки тестового буффера
 	/// </summary>
 	public void SetSpritesForTest(){
+		Builder.ClearTexture();
+		Builder.Lock();
+		Builder.SetPixel(0,0,Colors.Red);
+		Builder.SetPixel(5,5,Colors.Red);
+		Builder.SetPixel(10,10,Colors.Red);
+		Builder.Unlock();
 		TestTexture = ResourceLoader.Load<Texture>("res://EnemyMiner.png");
 		for (int i = 0; i < Buffer.getLength(); i++)
 		{
 			Buffer.SetSize(i,new Vector2(1,1));
-			Buffer.SetTexture(i, TestTexture);
+			Buffer.SetTexture(i, Builder.GetTexture());
 			Buffer.SetCoordinates(i, new Vector2((float)Rnd.NextDouble()*1000,(float)Rnd.NextDouble()*1000));
 			Buffer.SetVisible(i,true);
 			Buffer.AddAsChild(i,this);
@@ -85,19 +89,20 @@ public class MainScene : Node2D
 		for (int i = 0; i < Buffer.getLength(); i++)
 				{
 					Buffer.SetCoordinates(i, new Vector2((float)Rnd.NextDouble()*1000,(float)Rnd.NextDouble()*1000));
+					//Buffer.SetTexture(i, Builder.GetTexture());
 				}
 	}
 	 public override void _Ready()
 	{
 		SetTestConstructor();
-		//SetSpritesForTest();
+		SetSpritesForTest();
 	}
 
 	public override void _Draw(){
 	}
 	public override void _Process(float delta)
 	{ 
-		TestImageGeneration();
-		//UpdateSpritesForTest();
+		//TestImageGeneration();
+		UpdateSpritesForTest();
 	}
 }
