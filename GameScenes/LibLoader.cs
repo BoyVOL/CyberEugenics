@@ -134,7 +134,7 @@ public class TextureEditor{
 	/// </summary>
 	protected int Height = 10;
 
-	protected Image.Format Format = Image.Format.Rg8;
+	protected Image.Format Format = Image.Format.Rgba8;
 	/// <summary>
 	/// Конструктор класса по умолчанию
 	/// </summary>
@@ -154,7 +154,7 @@ public class TextureEditor{
 	/// </summary>
 	/// <param name="size">Сторона квадрата</param>
 	/// <param name="format">Формат изображения</param>
-	public TextureEditor(int size, Image.Format format = Image.Format.Rg8){
+	public TextureEditor(int size, Image.Format format = Image.Format.Rgba8){
 		Width = size;
 		Height = size;
 		Format = format;
@@ -166,7 +166,7 @@ public class TextureEditor{
 	/// <param name="width">Ширина изображения</param>
 	/// <param name="height">Высота изображения</param>
 	/// <param name="format">Вормат изображения</param>
-	public TextureEditor(int width, int height, Image.Format format = Image.Format.Rg8){
+	public TextureEditor(int width, int height, Image.Format format = Image.Format.Rgba8){
 		Width = width;
 		Height = height;
 		Format = format;
@@ -227,6 +227,23 @@ public class TextureEditor{
 		Format = format;
 		ClearTexture();
 	}
+	
+	/// <summary>
+	/// Настраивает изображение извне
+	/// </summary>
+	/// <param name="image">Изображение, которое нужно редактировать</param>
+	public void SetImage(Image image){
+		Data = image;
+		Width = Data.GetWidth();
+		Height = Data.GetHeight();
+	}
+	/// <summary>
+	/// Возвращает ссылку на изменяемое изображение
+	/// </summary>
+	/// <returns>ссылка на изображение в памяти</returns>
+	public Image GetData(){
+		return Data;
+	}
 	/// <summary>
 	/// Возврат экземпляра получившейся текстуры
 	/// </summary>
@@ -235,6 +252,66 @@ public class TextureEditor{
 		ImageTexture Temp = new ImageTexture();
 		Temp.CreateFromImage((Image)Data.Duplicate(true));
 		return Temp;
+	}
+}
+
+/// <summary>
+/// Класс редактирования текстур из пикселей
+/// </summary>
+public class TextureEditorPalette : TextureEditor {
+	/// <summary>
+	/// Описание класса палитры цветов, основаннях на массиве
+	/// </summary>
+	public class Palette {
+		/// <summary>
+		/// Массив цветов
+		/// </summary>
+		protected Color[] Colors;
+		/// <summary>
+		/// Конструктор с необязательным параметром. Задаёт всем элементам массива значения по умолчанию.
+		/// </summary>
+		public Palette(int size = 1){
+			Colors = new Color[size];
+			for (int i = 0; i < Colors.Length; i++)
+			{
+				Colors[i] = new Color(0,0,0,0);
+			}
+		}
+		/// <summary>
+		/// Метод получения цвета из указанного положения массива
+		/// </summary>
+		/// <param name="i">индекс цвета</param>
+		/// <returns>Значение цвета</returns>
+		public Color GetColor(int i){
+			return Colors[i];
+		}
+		/// <summary>
+		/// Метод задания цвета в указанном месте
+		/// </summary>
+		/// <param name="i">индекс позиции цвета, который надо задать</param>
+		/// <param name="clr">Сам цвет</param>
+		public void SetColor(int i, Color clr){
+			Colors[i] = clr;
+		}
+	}
+	/// <summary>
+	/// Текущая палитра цветов
+	/// </summary>
+	private Palette CurPalette = new Palette();
+	/// Метод замены пикселя в соответствии с цветом в указанной позиции палитры
+	/// </summary>
+	/// <param name="i"></param>
+	/// <param name="j"></param>
+	/// <param name="PalID"></param>
+	public void SetPixFromPalet(int i, int j, byte PalID){
+		base.SetPixel(i,j,CurPalette.GetColor(PalID));
+	}
+	/// <summary>
+	/// Задаёт новую палитру цветов
+	/// </summary>
+	/// <param name="pal">новая палитра</param>
+	public void SetPalette(Palette pal){
+		CurPalette = pal;
 	}
 }
 
@@ -382,6 +459,12 @@ public class Unit
    
 }
 
+/// <summary>
+/// Хэш-таблица, распределяющая объекты по их координатам
+/// </summary>
+public class PosHashTable{
+	
+}
 public class LibLoader : Node
 {
 	// Declare member variables here. Examples:
