@@ -460,10 +460,190 @@ public class Unit
 }
 
 /// <summary>
-/// Хэш-таблица, распределяющая объекты по их координатам
+/// Хэш-таблица, распределяющая объекты в очереди по их координатам
 /// </summary>
-public class PosHashTable{
-	
+public class PosQueueTable<T> {
+	/// <summary>
+	/// Таблица очередей, содержащая все координаты
+	/// </summary>
+	/// <returns></returns>
+	protected System.Collections.Hashtable HshTable = new System.Collections.Hashtable();
+	/// <summary>
+	/// Константа смещения второй координаты в хэш индексе;
+	/// </summary>
+	protected const int SecondCoordShift = 100000;
+	/// <summary>
+	/// Переменная для извлечения данных из очередей
+	/// </summary>
+	protected System.Collections.Queue Output;
+	/// <summary>
+	/// Метод для трансляции двух координат в одно целочисленное значение
+	/// </summary>
+	/// <param name="x">координата x</param>
+	/// <param name="y">координата y</param>
+	/// <returns></returns>
+	public int TranslateCoords(int x, int y){
+		return x+y*SecondCoordShift;
+	}
+	/// <summary>
+	/// Метод инициализирует новую очередь по указанным координатам
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	public void InitQueue(int x, int y){
+		System.Collections.Queue Temp = new System.Collections.Queue();
+		HshTable.Add(TranslateCoords(x,y),Temp);
+	}
+	/// <summary>
+	/// Метод добавления элемента в очередь по указанным координатам
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <param name="item">Элемент, который надо добавить</param>
+	public void Enqueue(int x, int y, T item){
+		Output = (System.Collections.Queue)HshTable[TranslateCoords(x,y)];
+		if (Output != null){	
+			Output.Enqueue(item);
+		} else throw new Exception("Queue is not initialised");
+	}
+	/// <summary>
+	/// Метод изъятия первого элемента из очереди по выбранным координатам
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <returns>первый в очереди элемент</returns>
+	public T Dequeue(int x, int y){
+		Output = (System.Collections.Queue)HshTable[TranslateCoords(x,y)];
+		if (Output != null){
+			return (T)Output.Dequeue();
+		} else throw new Exception("Queue is not initialised");
+	}
+	/// <summary>
+	/// Проверка на то, что по указанным координатам уже задана очередь
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <returns>true, если очередь существует. false в обратном случае</returns>
+	public bool Exists(int x, int y){
+		Output = (System.Collections.Queue)HshTable[TranslateCoords(x,y)];
+		return Output != null;
+	}
+	/// <summary>
+	/// Инициализирует набор очередей по координатам в прямоугольной области
+	/// </summary>
+	/// <param name="MinX">Нижний край области</param>
+	/// <param name="MaxX">Верхний край области</param>
+	/// <param name="MinY">Левый край области</param>
+	/// <param name="MaxY">Правый край области</param>
+	public void InitRange(int MinX, int MaxX, int MinY, int MaxY){
+		for (int x = MinX; x <= MaxX; x++)
+		{
+			for (int y = MinY; y <= MaxY; y++)
+			{
+				InitQueue(x,y);
+			}
+		}
+	}
+}
+
+/// <summary>
+/// Хэш-таблица, распределяющая объекты в списки по их координатам
+/// </summary>
+public class PosListTable<T> {
+	/// <summary>
+	/// Таблица очередей, содержащая все координаты
+	/// </summary>
+	/// <returns></returns>
+	protected System.Collections.Hashtable HshTable = new System.Collections.Hashtable();
+	/// <summary>
+	/// Константа смещения второй координаты в хэш индексе;
+	/// </summary>
+	protected const int SecondCoordShift = 100000;
+	/// <summary>
+	/// Переменная-буфер для извлечения идентификатора списка
+	/// </summary>
+	protected System.Collections.ArrayList Output;
+	/// <summary>
+	/// Метод для трансляции двух координат в одно целочисленное значение
+	/// </summary>
+	/// <param name="x">координата x</param>
+	/// <param name="y">координата y</param>
+	/// <returns></returns>
+	public int TranslateCoords(int x, int y){
+		return x+y*SecondCoordShift;
+	}
+	/// <summary>
+	/// Метод для инициализации списка по указанным координатам
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	public void InitList(int x, int y){
+		System.Collections.ArrayList Temp = new System.Collections.ArrayList();
+		HshTable.Add(TranslateCoords(x,y),Temp);
+	}
+	/// <summary>
+	/// Метод для добавления элемента в конец списка по указанным координатам
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <param name="item">Элемент, который надо добавить</param>
+	public void AddElement(int x, int y, T item){
+		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		if (Output != null){	
+			Output.Add(item);
+		} else throw new Exception("Queue is not initialised");
+	}
+	/// <summary>
+	/// Метод для удаления элемента с указанным индексом из списка по указанным координатам
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <param name="id">индекс элемента в списке</param>
+	public void DeleteElement(int x, int y, int id){
+		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		if (Output != null){
+			Output.RemoveAt(id);
+		} else throw new Exception("Queue is not initialised");
+	}
+	/// <summary>
+	/// Метод получения элемента в определённом индексе
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <param name="i">индекс целевого элемента</param>
+	/// <returns>Элемент по указанному индексу</returns>
+	public T GetElement(int x, int y, int i){
+		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		if (Output != null){
+			return (T)Output[i];
+		} else throw new Exception("Queue is not initialised");
+	}
+	/// <summary>
+	/// Проверка на то, что по указанным координатам уже задана очередь
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <returns>true, если очередь существует. false в обратном случае</returns>
+	public bool Exists(int x, int y){
+		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		return Output != null;
+	}
+	/// <summary>
+	/// Инициализирует набор очередей по координатам в прямоугольной области
+	/// </summary>
+	/// <param name="MinX">Нижний край области</param>
+	/// <param name="MaxX">Верхний край области</param>
+	/// <param name="MinY">Левый край области</param>
+	/// <param name="MaxY">Правый край области</param>
+	public void InitRange(int MinX, int MaxX, int MinY, int MaxY){
+		for (int x = MinX; x <= MaxX; x++)
+		{
+			for (int y = MinY; y <= MaxY; y++)
+			{
+				InitList(x,y);
+			}
+		}
+	}
 }
 public class LibLoader : Node
 {

@@ -49,6 +49,33 @@ public class MainScene : Node2D
 		}
 	}
 	/// <summary>
+	/// Метод тестирования функционала словаря, который предоставляется движком
+	/// </summary>
+	public void TestDictionary(){
+		Godot.Collections.Dictionary<int,string> TestDict = new Godot.Collections.Dictionary<int,string>();
+		for (int i = 0; i < 10000; i++)
+		{
+			TestDict.Add(i,"test");
+		}
+		string Result;
+		TestDict.TryGetValue(1,out Result);
+		//GD.Print("Результат теста словаря = ", Result);
+	}
+	/// <summary>
+	/// Проверка быстродействия и возможностей системного класса шеш таблицы
+	/// </summary>
+	public void TestSysHashTable(){
+		System.Collections.Hashtable Hash = new System.Collections.Hashtable();
+		System.Collections.Queue test = new System.Collections.Queue();
+		for (float i = 0; i < 100000; i++)
+		{
+			Hash.Add(i,test);
+		}
+		//string Result;
+		//Result = (string)Hash[0];
+		//GD.Print("Результат теста хеш-таблицы] = ", Result);
+	}
+	/// <summary>
 	/// Метод для проверки создания и редактирования изображений
 	/// </summary>
 	public void TestImageGeneration(){
@@ -83,6 +110,14 @@ public class MainScene : Node2D
 		}
 	}
 	/// <summary>
+	/// Метод для тестирования класса PosQueueTable
+	/// </summary>
+	public void TestPosQueueTable(){
+		PosQueueTable<string> Test = new PosQueueTable<string>();
+		Test.InitRange(-100,100,-100,100);
+		GD.Print(Test.Exists(99,99));
+	}
+	/// <summary>
 	/// Функция обновления тестового массива спрайтов
 	/// </summary>
 	public void UpdateSpritesForTest(){
@@ -94,15 +129,14 @@ public class MainScene : Node2D
 	}
 	 public override void _Ready()
 	{
-		SetTestConstructor();
-		SetSpritesForTest();
+		//SetTestConstructor();
+		//SetSpritesForTest();
 	}
 
 	public override void _Draw(){
 	}
 	public override void _Process(float delta)
 	{ 
-		//TestImageGeneration();
-		UpdateSpritesForTest();
+		TestPosQueueTable();
 	}
 }
