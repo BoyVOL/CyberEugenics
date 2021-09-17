@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections;
 
 /// <summary>
 /// Класс для создания и защищённого хранения фиксированного количества элементов заданного класса. 
@@ -31,6 +32,14 @@ public class FixedBufferArray<T> where T : class, new(){
 		{
 			Items[i] = new T();
 		}
+	}
+	/// <summary>
+	/// Метод для возвращения ссылки на содержащийся объект
+	/// </summary>
+	/// <param name="i"></param>
+	/// <returns></returns>
+	public T GetItem(int i){
+		return Items[i];
 	}
 	/// <summary>
 	/// Возврат длины внутреннего массива
@@ -316,6 +325,65 @@ public class TextureEditorPalette : TextureEditor {
 }
 
 /// <summary>
+/// Класс, содержащий в себе функционал для обновления состояния каждого объекта в списке
+/// </summary>
+public class UpdatableList{
+	/// <summary>
+	/// Класс для определения элемента и метода его обновления
+	/// </summary>
+	public abstract class Updatable{
+		public abstract void Update();
+	}
+	/// <summary>
+	/// Список Обновляемых элементов
+	/// </summary>
+	/// <returns></returns>
+	ArrayList ListOfObjects = new ArrayList();
+	/// <summary>
+	/// Добавление элемента в список
+	/// </summary>
+	/// <param name="Element">элемент, который нужно добавить</param>
+	public void AddElement(Updatable Element){
+		ListOfObjects.Add(Element);
+	}
+	/// <summary>
+	/// Очистка списка от всех элементов
+	/// </summary>
+	public void Clear(){
+		ListOfObjects = new ArrayList();
+	}
+	/// <summary>
+	/// Метод обновления всех элементов в списке
+	/// </summary>
+	public void UpdateAll(){
+		foreach (Updatable item in ListOfObjects){
+			item.Update();
+		}
+	}
+}
+
+/// <summary>
+/// Класс, отвечающий за физическое движение какого-либо предмета
+/// </summary>
+public class MovingBody{
+	/// <summary>
+	/// Текущее положение объекта
+	/// </summary>
+	public Vector2 Position;
+	/// <summary>
+	/// Вектор скорости
+	/// </summary>
+	public Vector2 Speed;
+	/// <summary>
+	/// Метод обновления координат объекта в соответствии с его текущими скоростью и положением
+	/// </summary>
+	/// <param name="t">интервал времени, в котором происходит движение</param>
+	public void Move(float t){
+		Position+= Speed * t;
+	}
+}
+
+/// <summary>
 /// Класс проверки многопоточности и взаимодействия скриптов
 /// </summary>
 public class TestClass {
@@ -467,7 +535,7 @@ public class PosQueueTable<T> {
 	/// Таблица очередей, содержащая все координаты
 	/// </summary>
 	/// <returns></returns>
-	protected System.Collections.Hashtable HshTable = new System.Collections.Hashtable();
+	protected Hashtable HshTable = new Hashtable();
 	/// <summary>
 	/// Константа смещения второй координаты в хэш индексе;
 	/// </summary>
@@ -475,7 +543,7 @@ public class PosQueueTable<T> {
 	/// <summary>
 	/// Переменная для извлечения данных из очередей
 	/// </summary>
-	protected System.Collections.Queue Output;
+	protected Queue Output;
 	/// <summary>
 	/// Метод для трансляции двух координат в одно целочисленное значение
 	/// </summary>
@@ -491,7 +559,7 @@ public class PosQueueTable<T> {
 	/// <param name="x"></param>
 	/// <param name="y"></param>
 	public void InitQueue(int x, int y){
-		System.Collections.Queue Temp = new System.Collections.Queue();
+		Queue Temp = new Queue();
 		HshTable.Add(TranslateCoords(x,y),Temp);
 	}
 	/// <summary>
@@ -501,7 +569,7 @@ public class PosQueueTable<T> {
 	/// <param name="y"></param>
 	/// <param name="item">Элемент, который надо добавить</param>
 	public void Enqueue(int x, int y, T item){
-		Output = (System.Collections.Queue)HshTable[TranslateCoords(x,y)];
+		Output = (Queue)HshTable[TranslateCoords(x,y)];
 		if (Output != null){	
 			Output.Enqueue(item);
 		} else throw new Exception("Queue is not initialised");
@@ -513,7 +581,7 @@ public class PosQueueTable<T> {
 	/// <param name="y"></param>
 	/// <returns>первый в очереди элемент</returns>
 	public T Dequeue(int x, int y){
-		Output = (System.Collections.Queue)HshTable[TranslateCoords(x,y)];
+		Output = (Queue)HshTable[TranslateCoords(x,y)];
 		if (Output != null){
 			return (T)Output.Dequeue();
 		} else throw new Exception("Queue is not initialised");
@@ -525,7 +593,7 @@ public class PosQueueTable<T> {
 	/// <param name="y"></param>
 	/// <returns>true, если очередь существует. false в обратном случае</returns>
 	public bool Exists(int x, int y){
-		Output = (System.Collections.Queue)HshTable[TranslateCoords(x,y)];
+		Output = (Queue)HshTable[TranslateCoords(x,y)];
 		return Output != null;
 	}
 	/// <summary>
@@ -554,7 +622,7 @@ public class PosListTable<T> {
 	/// Таблица очередей, содержащая все координаты
 	/// </summary>
 	/// <returns></returns>
-	protected System.Collections.Hashtable HshTable = new System.Collections.Hashtable();
+	protected Hashtable HshTable = new Hashtable();
 	/// <summary>
 	/// Константа смещения второй координаты в хэш индексе;
 	/// </summary>
@@ -562,7 +630,7 @@ public class PosListTable<T> {
 	/// <summary>
 	/// Переменная-буфер для извлечения идентификатора списка
 	/// </summary>
-	protected System.Collections.ArrayList Output;
+	protected ArrayList Output;
 	/// <summary>
 	/// Метод для трансляции двух координат в одно целочисленное значение
 	/// </summary>
@@ -578,7 +646,7 @@ public class PosListTable<T> {
 	/// <param name="x"></param>
 	/// <param name="y"></param>
 	public void InitList(int x, int y){
-		System.Collections.ArrayList Temp = new System.Collections.ArrayList();
+		ArrayList Temp = new ArrayList();
 		HshTable.Add(TranslateCoords(x,y),Temp);
 	}
 	/// <summary>
@@ -588,7 +656,7 @@ public class PosListTable<T> {
 	/// <param name="y"></param>
 	/// <param name="item">Элемент, который надо добавить</param>
 	public void AddElement(int x, int y, T item){
-		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		Output = (ArrayList)HshTable[TranslateCoords(x,y)];
 		if (Output != null){	
 			Output.Add(item);
 		} else throw new Exception("Queue is not initialised");
@@ -600,7 +668,7 @@ public class PosListTable<T> {
 	/// <param name="y"></param>
 	/// <param name="id">индекс элемента в списке</param>
 	public void DeleteElement(int x, int y, int id){
-		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		Output = (ArrayList)HshTable[TranslateCoords(x,y)];
 		if (Output != null){
 			Output.RemoveAt(id);
 		} else throw new Exception("Queue is not initialised");
@@ -613,7 +681,7 @@ public class PosListTable<T> {
 	/// <param name="i">индекс целевого элемента</param>
 	/// <returns>Элемент по указанному индексу</returns>
 	public T GetElement(int x, int y, int i){
-		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		Output = (ArrayList)HshTable[TranslateCoords(x,y)];
 		if (Output != null){
 			return (T)Output[i];
 		} else throw new Exception("Queue is not initialised");
@@ -625,7 +693,7 @@ public class PosListTable<T> {
 	/// <param name="y"></param>
 	/// <returns>true, если очередь существует. false в обратном случае</returns>
 	public bool Exists(int x, int y){
-		Output = (System.Collections.ArrayList)HshTable[TranslateCoords(x,y)];
+		Output = (ArrayList)HshTable[TranslateCoords(x,y)];
 		return Output != null;
 	}
 	/// <summary>
