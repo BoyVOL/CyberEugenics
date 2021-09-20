@@ -331,8 +331,10 @@ public class UpdatableList{
 	/// <summary>
 	/// Класс для определения элемента и метода его обновления
 	/// </summary>
-	public abstract class Updatable{
-		public abstract void Update();
+	public class Updatable{
+		public virtual void Update(){
+
+		}
 	}
 	/// <summary>
 	/// Список Обновляемых элементов
@@ -384,40 +386,93 @@ public class MovingBody{
 }
 
 /// <summary>
-/// Класс проверки многопоточности и взаимодействия скриптов
+/// Базовый класс для ячеек PathfindCellField
 /// </summary>
-public class TestClass {
-	/// <summary> Поле данных 1 </summary>
-	public int data1 = 0;
-	/// <summary> Поле данных 1 </summary>
-	public int data2 = 0;
+public class PathfindCell{
 	/// <summary>
-	/// Поле данных 3
+	/// Вес за пересечение этой ячейки
 	/// </summary>
-	public int data3 = 0;
+	public int Weight = 1;
 	/// <summary>
-	/// Метод изменения данных 1. Увеличивает поле на 1 и спит на секунду.
+	/// Может ли целевая ячейка быть доступна из этой ячейки
 	/// </summary>
-	public void ChangeData1(){
-		data1 ++;
-		System.Threading.Thread.Sleep(100);
-		GD.Print("Data1 = "+data1.ToString());
+	/// <param name="target">ячейка, к которой пытаемся получить доступ</param>
+	/// <returns>истина, если доступна</returns>
+	public virtual bool CanConnect(PathfindCell target){
+		return true;
 	}
-   /// <summary>
-	/// Метод изменения данных 2. Увеличивает поле на 1 и спит на секунду.
+}
+
+/// <summary>
+/// Кастомное поле из ячеек для имплементации алгоритма поиска пути А* (ну или корявой моей версии)
+/// </summary>
+public class PathfindCellField<T> where T: PathfindCell {
+
+
+	PathfindCell[,] Grid;
+
+	AStar2D Graph = new AStar2D();
+
+	private int Width;
+
+	private int Height;
+	/// <summary>
+	/// Константа смещения второй координаты в хэш индексе;
 	/// </summary>
-	public void ChangeData2(){
-		data2 ++;
-		System.Threading.Thread.Sleep(100);
-		GD.Print("Data2 = "+data2.ToString());
+	protected const int SecondCoordShift = 100000;
+
+	public Vector2 NullPoint;
+	/// <summary>
+	/// Метод для вычисления индекса из двух координат
+	/// </summary>
+	/// <param name="X"></param>
+	/// <param name="Y"></param>
+	/// <returns></returns>
+	private int calcID(int X, int Y){
+		return X+Y*SecondCoordShift;
 	}
-   /// <summary>
-	/// Метод изменения данных 3. Увеличивает поле на 1 и спит на секунду.
+	/// <summary>
+	/// Метод для соединения двух точек
 	/// </summary>
-	public void ChangeData3(){
-		data3 ++;
-		System.Threading.Thread.Sleep(1000);
-		GD.Print("Data3 = "+data3.ToString());
+	/// <param name="X1"></param>
+	/// <param name="Y1"></param>
+	/// <param name="X2"></param>
+	/// <param name="Y2"></param>
+	private void ConnectPoints(int X1, int Y1, int X2, int Y2){
+		if(Grid[X1,Y1].CanConnect(Grid[X2,Y2])){
+			Graph.ConnectPoints(calcID(X1,Y1),calcID(X2,Y2));
+		}
+	}
+	/// <summary>
+	/// Метод для перезаполнения атрибутов класса стандартной информацией
+	/// </summary>
+	public virtual void ResetGRid(){
+		Graph.Clear();
+		Grid = new PathfindCell[Height,Width];
+		// Объявляем ячейки и добавляем точки к графу для каждой
+		for (int x = 0; x <= Height; x++)
+		{
+			for (int y = 0; y <= Width; y++)
+			{
+				Grid[x,y] = new PathfindCell();
+				Graph.AddPoint(calcID(x,y),NullPoint+new Vector2(x,y),Grid[x,y].Weight);
+			}
+		}
+		// Соединяем ячейки основываясь на их совместимости
+		for (int x = 1; x < Height; x++)
+		{
+			for (int y = 1; y < Width; y++)
+			{
+				ConnectPoints(x,y,x-1,y-1);
+				ConnectPoints(x,y,x-1,y);
+				ConnectPoints(x,y,x-1,y+1);
+				ConnectPoints(x,y,x,y-1);
+				ConnectPoints(x,y,x,y+1);
+				ConnectPoints(x,y,x+1,y-1);
+				ConnectPoints(x,y,x+1,y);
+				ConnectPoints(x,y,x+1,y+1);
+			}
+		}
 	}
 }
 
@@ -712,21 +767,4 @@ public class PosListTable<T> {
 			}
 		}
 	}
-}
-public class LibLoader : Node
-{
-	// Declare member variables here. Examples:
-	// private int a = 2;
-	// private string b = "text";
-
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-	}
-
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
 }
