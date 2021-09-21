@@ -3,6 +3,45 @@ using System;
 using System.Collections;
 
 /// <summary>
+/// Класс проверки многопоточности и взаимодействия скриптов
+/// </summary>
+public class TestClass {
+	/// <summary> Поле данных 1 </summary>
+	public int data1 = 0;
+	/// <summary> Поле данных 1 </summary>
+	public int data2 = 0;
+	/// <summary>
+	/// Поле данных 3
+	/// </summary>
+	public int data3 = 0;
+	/// <summary>
+	/// Метод изменения данных 1. Увеличивает поле на 1 и спит на секунду.
+	/// </summary>
+	public void ChangeData1(){
+		data1 ++;
+		System.Threading.Thread.Sleep(100);
+		GD.Print("Data1 = "+data1.ToString());
+	}
+   /// <summary>
+	/// Метод изменения данных 2. Увеличивает поле на 1 и спит на секунду.
+	/// </summary>
+	public void ChangeData2(){
+		data2 ++;
+		System.Threading.Thread.Sleep(100);
+		GD.Print("Data2 = "+data2.ToString());
+	}
+   /// <summary>
+	/// Метод изменения данных 3. Увеличивает поле на 1 и спит на секунду.
+	/// </summary>
+	public void ChangeData3(){
+		data3 ++;
+		System.Threading.Thread.Sleep(1000);
+		GD.Print("Data3 = "+data3.ToString());
+	}
+}
+
+
+/// <summary>
 /// Класс для создания и защищённого хранения фиксированного количества элементов заданного класса. 
 /// Родительский класс для множества других дочерних.
 /// </summary>

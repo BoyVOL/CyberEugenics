@@ -5,8 +5,6 @@
     <RootNamespace>CyberEugenics</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="scripts\*.cs" />
-    <Content Include="icon.cs" />
     <Content Include="GameScenes\MainScene.cs" />
     <Content Include="ClassLibrary.cs" />
     <Content Include="UnitTesting.cs" />
