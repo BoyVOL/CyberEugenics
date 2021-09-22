@@ -432,6 +432,7 @@ public class PathfindCell{
 	/// Вес за пересечение этой ячейки
 	/// </summary>
 	public int Weight = 1;
+
 	/// <summary>
 	/// Может ли целевая ячейка быть доступна из этой ячейки
 	/// </summary>
@@ -445,21 +446,24 @@ public class PathfindCell{
 /// <summary>
 /// Кастомное поле из ячеек для имплементации алгоритма поиска пути А* (ну или корявой моей версии)
 /// </summary>
-public class PathfindCellField<T> where T: PathfindCell {
+public class PathfindCellField<T> where T: PathfindCell, new() {
 
-
-	PathfindCell[,] Grid;
-
+	/// <summary>
+	/// Таблица ячеек, которая подгружается извне и на основе которой идёт построение графа для поиска пути
+	/// </summary>
+	T[,] Grid;
+	/// <summary>
+	/// Граф, в котором осуществляется поиск пути
+	/// </summary>
+	/// <returns></returns>
 	AStar2D Graph = new AStar2D();
-
-	private int Width;
-
-	private int Height;
 	/// <summary>
 	/// Константа смещения второй координаты в хэш индексе;
 	/// </summary>
 	protected const int SecondCoordShift = 100000;
-
+	/// <summary>
+	/// Смещение павой верхней точки карты относительно глобальных координат
+	/// </summary>
 	public Vector2 NullPoint;
 	/// <summary>
 	/// Метод для вычисления индекса из двух координат
@@ -469,6 +473,14 @@ public class PathfindCellField<T> where T: PathfindCell {
 	/// <returns></returns>
 	private int calcID(int X, int Y){
 		return X+Y*SecondCoordShift;
+	}
+	/// <summary>
+	/// Задаёт сетку для дальнейшего поиска пути и переопределяет связи между ячейками
+	/// </summary>
+	/// <param name="grid">новая сетка</param>
+	public void SetGrid(T[,] grid){
+		Grid = grid;
+		ResetGraph();
 	}
 	/// <summary>
 	/// Метод для соединения двух точек
@@ -483,24 +495,23 @@ public class PathfindCellField<T> where T: PathfindCell {
 		}
 	}
 	/// <summary>
-	/// Метод для перезаполнения атрибутов класса стандартной информацией
+	/// Метод для перезаполнения графа в соответствии с новой картой ячеек
 	/// </summary>
-	public virtual void ResetGRid(){
+	public virtual void ResetGraph(){
 		Graph.Clear();
-		Grid = new PathfindCell[Height,Width];
 		// Объявляем ячейки и добавляем точки к графу для каждой
-		for (int x = 0; x <= Height; x++)
+		for (int x = 0; x < Grid.GetLength(0); x++)
 		{
-			for (int y = 0; y <= Width; y++)
+			for (int y = 0; y < Grid.GetLength(1); y++)
 			{
-				Grid[x,y] = new PathfindCell();
+				Grid[x,y] = new T();
 				Graph.AddPoint(calcID(x,y),NullPoint+new Vector2(x,y),Grid[x,y].Weight);
 			}
 		}
-		// Соединяем ячейки основываясь на их совместимости
-		for (int x = 1; x < Height; x++)
+		// Соединяем соседние ячейки основываясь на их совместимости
+		for (int x = 1; x < Grid.GetLength(0)-1; x++)
 		{
-			for (int y = 1; y < Width; y++)
+			for (int y = 1; y < Grid.GetLength(1)-1; y++)
 			{
 				ConnectPoints(x,y,x-1,y-1);
 				ConnectPoints(x,y,x-1,y);
@@ -512,6 +523,23 @@ public class PathfindCellField<T> where T: PathfindCell {
 				ConnectPoints(x,y,x+1,y+1);
 			}
 		}
+	}
+	/// <summary>
+	/// Возвращает массив векторов пути до нужной точки
+	/// </summary>
+	/// <param name="From"></param>
+	/// <param name="To"></param>
+	/// <returns>Массив позиций, по которым надо пройти до нужной позиции</returns>
+	public Vector2[] ReturnPath(Vector2 From, Vector2 To){
+		int StartID = Graph.GetClosestPoint(From);
+		int EndID = Graph.GetClosestPoint(To);
+		int[] IDPath =  Graph.GetIdPath(StartID,EndID);
+		Vector2[] Path = new Vector2[IDPath.Length];
+		for (int i = 0; i < IDPath.Length; i++)
+		{
+			Path[i] = Graph.GetPointPosition(IDPath[i]);
+		}
+		return Path;
 	}
 }
 
